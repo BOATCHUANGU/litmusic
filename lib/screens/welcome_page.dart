@@ -1,12 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import 'login_page.dart';
 import 'register_page.dart';
+import 'home_page.dart';
 
-class WelcomePage extends StatelessWidget {
+class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
 
   @override
+  State<WelcomePage> createState() => _WelcomePageState();
+}
+
+class _WelcomePageState extends State<WelcomePage> {
+  bool _checking = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAutoLogin();
+  }
+
+  Future<void> _checkAutoLogin() async {
+    final auth = context.read<AuthProvider>();
+    final success = await auth.tryAutoLogin();
+    if (success && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+      return;
+    }
+    if (mounted) setState(() => _checking = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_checking) {
+      return const Scaffold(
+        backgroundColor: Color(0xFF1a1a2e),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.music_note_rounded, size: 80, color: Colors.white24),
+              SizedBox(height: 16),
+              Text(
+                'LitMusic',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white38,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final colorScheme = Theme.of(context).colorScheme;
     const primaryColor = Color(0xFF1a1a2e);
 
@@ -26,7 +78,7 @@ class WelcomePage extends StatelessWidget {
                   color: colorScheme.primary,
                 ),
                 const SizedBox(height: 24),
-                Text(
+                const Text(
                   'LitMusic',
                   style: TextStyle(
                     fontSize: 36,
@@ -35,7 +87,7 @@ class WelcomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   '你的本地音乐伴侣',
                   style: TextStyle(
                     fontSize: 16,

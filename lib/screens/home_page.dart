@@ -3,12 +3,10 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/music_provider.dart';
 import '../providers/playlist_provider.dart';
-import '../providers/player_provider.dart';
-import '../models/song.dart';
 import '../widgets/song_tile.dart';
 import '../widgets/mini_player.dart';
-import 'player_page.dart';
 import 'playlist_list_page.dart';
+import 'my_tab.dart';
 import 'welcome_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -67,9 +65,10 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: const Color(0xFF0f0f23),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1a1a2e),
-        title: Text(['我的音乐', '我的收藏', '我的歌单'][_currentTab]),
-        titleTextStyle:
-            TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        title: Text(
+            ['我的音乐', '我的收藏', '我的歌单', '我的'][_currentTab]),
+        titleTextStyle: const TextStyle(
+            color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
         actions: [
           if (_currentTab == 0)
             IconButton(
@@ -95,6 +94,7 @@ class _HomePageState extends State<HomePage> {
                 const _AllSongsTab(),
                 const _FavoritesTab(),
                 const PlaylistListPage(),
+                const MyTab(),
               ],
             ),
           ),
@@ -119,6 +119,10 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.playlist_play),
               selectedIcon: Icon(Icons.playlist_play, color: Colors.deepPurple),
               label: '歌单'),
+          NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person, color: Colors.deepPurple),
+              label: '我的'),
         ],
       ),
     );
@@ -138,12 +142,12 @@ class _AllSongsTab extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.music_note, size: 80, color: Colors.white24),
+            const Icon(Icons.music_note, size: 80, color: Colors.white24),
             const SizedBox(height: 16),
-            Text('还没有导入歌曲',
+            const Text('还没有导入歌曲',
                 style: TextStyle(color: Colors.white38, fontSize: 16)),
             const SizedBox(height: 8),
-            Text('点击右上角图标导入本地音乐',
+            const Text('点击右上角图标导入本地音乐',
                 style: TextStyle(color: Colors.white24, fontSize: 13)),
           ],
         ),
@@ -171,12 +175,12 @@ class _FavoritesTab extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.favorite_border, size: 80, color: Colors.white24),
+            const Icon(Icons.favorite_border, size: 80, color: Colors.white24),
             const SizedBox(height: 16),
-            Text('还没有收藏歌曲',
+            const Text('还没有收藏歌曲',
                 style: TextStyle(color: Colors.white38, fontSize: 16)),
             const SizedBox(height: 8),
-            Text('在歌曲列表中点击心形图标收藏',
+            const Text('在歌曲列表中点击心形图标收藏',
                 style: TextStyle(color: Colors.white24, fontSize: 13)),
           ],
         ),

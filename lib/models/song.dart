@@ -4,6 +4,7 @@ class Song {
   final String artist;
   final String filePath;
   final int durationSeconds;
+  final String source;
 
   Song({
     required this.id,
@@ -11,7 +12,10 @@ class Song {
     required this.artist,
     required this.filePath,
     required this.durationSeconds,
+    this.source = 'local',
   });
+
+  bool get isFromBilibili => source == 'bilibili';
 
   Map<String, dynamic> toMap() => {
         'id': id,
@@ -19,6 +23,7 @@ class Song {
         'artist': artist,
         'file_path': filePath,
         'duration_seconds': durationSeconds,
+        'source': source,
       };
 
   factory Song.fromMap(Map<String, dynamic> map) => Song(
@@ -27,6 +32,7 @@ class Song {
         artist: map['artist'] as String,
         filePath: map['file_path'] as String,
         durationSeconds: map['duration_seconds'] as int,
+        source: (map['source'] as String?) ?? 'local',
       );
 
   String get durationFormatted {

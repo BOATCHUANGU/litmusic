@@ -4,6 +4,7 @@ import 'providers/auth_provider.dart';
 import 'providers/music_provider.dart';
 import 'providers/player_provider.dart';
 import 'providers/playlist_provider.dart';
+import 'providers/bilibili_provider.dart';
 import 'screens/welcome_page.dart';
 
 void main() {
@@ -22,6 +23,7 @@ class LitMusicApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MusicProvider()),
         ChangeNotifierProvider(create: (_) => PlayerProvider()),
         ChangeNotifierProvider(create: (_) => PlaylistProvider()),
+        ChangeNotifierProvider(create: (_) => BilibiliProvider()),
       ],
       child: Builder(
         builder: (ctx) {
@@ -29,6 +31,17 @@ class LitMusicApp extends StatelessWidget {
           // real duration, update it in the music provider.
           ctx.read<PlayerProvider>().onDurationKnown =
               ctx.read<MusicProvider>().updateSongDuration;
+
+          // Wire BilibiliProvider -> MusicProvider refresh
+          ctx.read<BilibiliProvider>().onSongAdded = () {
+            ctx.read<MusicProvider>().loadSongs();
+          };
+
+          // Check for saved Bilibili session on app start
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ctx.read<BilibiliProvider>().checkSession();
+          });
+
           return MaterialApp(
             title: 'LitMusic',
             debugShowCheckedModeBanner: false,

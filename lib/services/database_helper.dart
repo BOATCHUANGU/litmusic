@@ -33,8 +33,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -53,7 +54,8 @@ class DatabaseHelper {
         title TEXT NOT NULL,
         artist TEXT NOT NULL DEFAULT '未知歌手',
         file_path TEXT NOT NULL,
-        duration_seconds INTEGER NOT NULL DEFAULT 0
+        duration_seconds INTEGER NOT NULL DEFAULT 0,
+        source TEXT NOT NULL DEFAULT 'local'
       )
     ''');
 
@@ -84,6 +86,14 @@ class DatabaseHelper {
     ''');
   }
 
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute(
+        "ALTER TABLE songs ADD COLUMN source TEXT NOT NULL DEFAULT 'local'",
+      );
+    }
+  }
+
   // ===================== User =====================
 
   Future<bool> registerUser(String username, String password) async {
@@ -111,11 +121,30 @@ class DatabaseHelper {
     return User.fromMap(results.first);
   }
 
+  Future<User?> getUserByUsername(String username) async {
+    final db = await database;
+    final results = await db.query(
+      'users',
+      where: 'username = ?',
+      whereArgs: [username],
+    );
+    if (results.isEmpty) return null;
+    return User.fromMap(results.first);
+  }
+
   // ===================== Song =====================
 
   Future<void> insertSong(Song song) async {
     final db = await database;
     await db.insert('songs', song.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.ignore);
+  }
+
+  Future<void> insertSongWithSource(Song song, String source) async {
+    final db = await database;
+    final map = song.toMap();
+    map['source'] = source;
+    await db.insert('songs', map,
         conflictAlgorithm: ConflictAlgorithm.ignore);
   }
 
